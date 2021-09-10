@@ -1,7 +1,5 @@
 #include <InstrumentStore/AWSDynamoDBClient.h>
 
-AWSDynamoDBClient::~AWSDynamoDBClient () { Aws::ShutdownAPI (_options); }
-
 auto AWSDynamoDBClient::ListTables () -> std::vector<std::string> {
 
   using Aws::DynamoDB::Model::ListTablesOutcome;

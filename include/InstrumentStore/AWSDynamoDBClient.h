@@ -9,6 +9,9 @@
 #include <aws/dynamodb/model/CreateTableRequest.h>
 #include <aws/dynamodb/model/ListTablesRequest.h>
 
+/**
+ * @brief AWS DynamoDB Interface.
+ */
 class AWSDynamoDBClient {
  private:
   Aws::SDKOptions _options;
@@ -21,7 +24,7 @@ class AWSDynamoDBClient {
         _clientConfig {
             (Aws::InitAPI (_options), Aws::Client::ClientConfiguration {})},
         _client {Aws::DynamoDB::DynamoDBClient {_clientConfig}} {};
-  ~AWSDynamoDBClient ();
+  ~AWSDynamoDBClient () { Aws::ShutdownAPI (_options); };
 
   /**
    * @brief This function lists all of the tables in the DynamoDB database.
@@ -29,4 +32,6 @@ class AWSDynamoDBClient {
    * @return a list of tables in the DynamoDB database.
    */
   [[nodiscard]] auto ListTables () -> std::vector<std::string>;
+
+
 };
