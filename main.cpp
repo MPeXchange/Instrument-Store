@@ -3,11 +3,12 @@
 #include <InstrumentStore/AWSDynamoDBClient.h>
 
 int main () {
-  AWSDynamoDBClient client {};
+  AWSDynamoDBClient client;
 
-  for (const auto &table : client.ListTables ()) {
-    std::cout << table << std::endl;
-  }
-
-  return 0;
+  client.PutItem ("Equity", "Ticker", "SPY");
+  std::cout << (int) client.DoesItemExist ("Equity", "Ticker", "SPY")
+            << std::endl;
+  std::cout << (int) client.DeleteItem ("Equity", "Ticker", "SPY") << std::endl;
+  std::cout << (int) client.DoesItemExist ("Equity", "Ticker", "SPY")
+            << std::endl;
 }
