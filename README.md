@@ -8,7 +8,7 @@ exchange and all instruments created by users of the exchange.
 ### v0.1.0 Targeted Features
 
 - [ ] Equity Securities.
-  - [ ] Create
+  - [X] Create
     - Example: `CREATE EQUITY AAPL` creates a new security with the symbol **AAPL**.
   - [ ] List
     - Example: `LIST EQUITY` returns a list of all securities defined in the database.
