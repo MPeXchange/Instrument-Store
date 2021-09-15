@@ -172,3 +172,25 @@ auto AWSDynamoDBClient::DeleteItem (const std::string &tableName,
     return DeleteItemResponse::ERROR;
   }
 }
+auto AWSDynamoDBClient::ScanTable (const std::string &tableName,
+                                   const std::string &projection = "")
+    -> std::vector<std::string> {
+  Aws::DynamoDB::Model::ScanRequest req;
+  req.SetTableName (tableName);
+
+  if (!projection.empty ()) { req.SetProjectionExpression (projection); }
+
+  const Aws::DynamoDB::Model::ScanOutcome &outcome = _client.Scan (req);
+  std::vector<std::string> ret {};
+  if (outcome.IsSuccess ()) {
+    const Aws::Vector<
+        Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>> &items =
+        outcome.GetResult ().GetItems ();
+    for (const auto &item : items) {
+      for (const auto &i : item) { ret.push_back (i.second.GetS ()); }
+    }
+  } else {
+    std::cout << outcome.GetError ().GetMessage () << std::endl;
+  }
+  return ret;
+}

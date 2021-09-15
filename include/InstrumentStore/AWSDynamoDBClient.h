@@ -10,6 +10,7 @@
 #include <aws/dynamodb/model/CreateTableRequest.h>
 #include <aws/dynamodb/model/DeleteTableRequest.h>
 #include <aws/dynamodb/model/ListTablesRequest.h>
+#include <aws/dynamodb/model/ScanRequest.h>
 
 #include <aws/dynamodb/model/DeleteItemRequest.h>
 #include <aws/dynamodb/model/GetItemRequest.h>
@@ -117,6 +118,15 @@ class AWSDynamoDBClient {
   auto DeleteItem (const std::string &tableName,
                    const std::string &attributeKey,
                    const std::string &attributeValue) -> DeleteItemResponse;
+
+  /**
+   * @brief This function scans a table for a projection.
+   * @param tableName is the name of the table to scan.
+   * @param projection is a projection to scan the table with.
+   * @return the items in a table matching the projection.
+   */
+  auto ScanTable (const std::string &tableName, const std::string &projection)
+      -> std::vector<std::string>;
 
   // TODO: UpdateItemInTable
 };

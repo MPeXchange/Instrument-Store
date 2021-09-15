@@ -10,11 +10,19 @@
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
+using grpc::ServerWriter;
 using grpc::Status;
+
+using mpx::instrumentstore::EquityService;
 
 using mpx::instrumentstore::CreateEquityRequest;
 using mpx::instrumentstore::CreateEquityResponse;
-using mpx::instrumentstore::EquityService;
+
+using mpx::instrumentstore::ListEquityRequest;
+using mpx::instrumentstore::ListEquityResponse;
+
+using mpx::instrumentstore::DeleteEquityRequest;
+using mpx::instrumentstore::DeleteEquityResponse;
 
 class EquityServiceImpl final : public EquityService::Service {
  private:
@@ -27,13 +35,42 @@ class EquityServiceImpl final : public EquityService::Service {
   Status CreateEquity (ServerContext *context,
                        const CreateEquityRequest *request,
                        CreateEquityResponse *response) override {
-    std::cout << request->ticker () << std::endl;
-
-    // Insert AWS Dynamo DB code here.
-    _dynamo_client.PutItem ("Equity", "Ticker", request->ticker ());
-
-    response->set_ticker (request->ticker ());
+    for (const auto &ticker : request->tickers ()) {
+      std::cout << "Creating: " << ticker << std::endl;
+      auto AWSResponse = _dynamo_client.PutItem ("Equity", "Ticker", ticker);
+      response->set_success (AWSResponse
+                             != AWSDynamoDBClient::PutItemResponse::ERROR);
+    }
     return Status::OK;
+  }
+
+  Status DeleteEquity (ServerContext *context,
+                       const DeleteEquityRequest *request,
+                       DeleteEquityResponse *response) override {
+    for (const auto &ticker : request->tickers ()) {
+      std::cout << "Deleting: " << ticker << std::endl;
+      auto AWSResponse = _dynamo_client.DeleteItem ("Equity", "Ticker", ticker);
+      response->set_success (AWSResponse
+                             != AWSDynamoDBClient::DeleteItemResponse::ERROR);
+    }
+    return Status::OK;
+  }
+
+  Status ListEquity (ServerContext *context, const ListEquityRequest *request,
+                     ListEquityResponse *response) override {
+    if (request->tickers ().empty ()) {
+      auto AWSResponse = _dynamo_client.ScanTable ("Equity", "");
+      for (const auto &ticker : AWSResponse) { response->add_tickers (ticker); }
+      return Status::OK;
+    } else {
+      for (const auto &ticker : request->tickers ()) {
+        if (_dynamo_client.DoesItemExist ("Equity", "Ticker", ticker)
+            == AWSDynamoDBClient::DoesItemExistResponse::EXISTS) {
+          response->add_tickers (ticker);
+        }
+      }
+      return Status::OK;
+    }
   }
 };
 

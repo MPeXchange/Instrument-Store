@@ -1,10 +1,13 @@
 cmake_minimum_required(VERSION 3.20)
-project(InstrumentStore VERSION 0.0.1)
+project(InstrumentStore VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 20)
 add_compile_options(-Wall -Wextra -pedantic)
 
 find_package(AWSSDK REQUIRED COMPONENTS dynamodb)
+
+find_package(Boost REQUIRED COMPONENTS program_options)
+include_directories(${Boost_INCLUDE_DIRS})
 
 set(OPENSSL_ROOT_DIR /usr/local/opt/openssl/)
 #set(OPENSSL_CRYPTO_LIBRARY /usr/local/opt/openssl/lib/)
@@ -54,6 +57,7 @@ target_link_libraries(InstrumentStoreAWS ${AWSSDK_LINK_LIBRARIES})
 add_executable(InstrumentStoreClient client.cpp ${Instrument_Store_SOURCE} ${instrument_store_proto_srcs} ${instrument_store_grpc_srcs})
 target_link_libraries(InstrumentStoreClient ${_REFLECTION} ${_GRPC_GRPCPP} ${_PROTOBUF_LIBPROTOBUF})
 target_link_libraries(InstrumentStoreClient ${AWSSDK_LINK_LIBRARIES})
+target_link_libraries(InstrumentStoreClient ${Boost_PROGRAM_OPTIONS_LIBRARIES})
 
 add_executable(InstrumentStoreServer server.cpp ${Instrument_Store_SOURCE} ${instrument_store_proto_srcs} ${instrument_store_grpc_srcs})
 target_link_libraries(InstrumentStoreServer ${_REFLECTION} ${_GRPC_GRPCPP} ${_PROTOBUF_LIBPROTOBUF})

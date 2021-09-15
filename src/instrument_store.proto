@@ -4,31 +4,30 @@ package mpx.instrumentstore;
 
 service EquityService {
   rpc CreateEquity (CreateEquityRequest) returns (CreateEquityResponse);
-  rpc ListEquity (ListEquityRequest) returns (stream ListEquityResponse);
+  rpc ListEquity (ListEquityRequest) returns (ListEquityResponse);
   rpc DeleteEquity (DeleteEquityRequest) returns (DeleteEquityResponse);
 }
 
 message CreateEquityRequest {
-  string ticker = 1;
+  repeated string tickers = 1;
 }
 
 message CreateEquityResponse {
-  string ticker = 1;
-}
-
-message ListEquityRequest {
-  optional string ticker = 1;
-}
-
-message ListEquityResponse {
-  string ticker = 1;
+  bool success = 1;
 }
 
 message DeleteEquityRequest {
-  string ticker = 1;
+  repeated string tickers = 1;
 }
 
 message DeleteEquityResponse {
   bool success = 1;
-  string response = 2;
+}
+
+message ListEquityRequest {
+  repeated string tickers = 1;
+}
+
+message ListEquityResponse {
+  repeated string tickers = 1;
 }

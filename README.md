@@ -10,9 +10,9 @@ exchange and all instruments created by users of the exchange.
 - [ ] Equity Securities.
   - [X] Create
     - Example: `CREATE EQUITY AAPL` creates a new security with the symbol **AAPL**.
-  - [ ] List
+  - [X] List
     - Example: `LIST EQUITY` returns a list of all securities defined in the database.
-  - [ ] Delete (for administrative purposes)
+  - [X] Delete (for administrative purposes)
     - Example: `DELETE EQUITY AAPL` deletes the security with the symbol **AAPL**.
 
 ### v0.2.0 Targeted Features
